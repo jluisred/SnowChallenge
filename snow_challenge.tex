@@ -4,20 +4,7 @@
 
 \documentclass{sig-alternate}
 
-% Fix for copyright block height
-\makeatletter
-\def\@copyrightlength{2.5} % Increase this value to leave more space above copyright notice
-\def\ftype@copyrightbox{8}
-\def\@copyrightspace{
-\@float{copyrightbox}[b]
-\begin{center}
-\setlength{\unitlength}{1pc}
-\begin{picture}(20,\@copyrightlength)
-\put(0,-0.95){\crnotice{\@toappear}}
-\end{picture}
-\end{center}
-\end@float}
-\makeatother
+
 
 \newcommand{\superscript}[1]{\ensuremath{^{\textrm{#1}}}}
 
@@ -74,8 +61,8 @@ morekeywords={version,owl,rdf,rdfs,xml,xsd,dbpedia,dbo,str,sso,scms,fr,ld}
 %http://dx.doi.org/10.1145/2567948.2579326}
 %\\Include the http://DOI string/url which is specific for your submission and included in the ACM rightsreview confirmation email upon completing your IW3C2 form}
 
-\clubpenalty=10000
-\widowpenalty = 10000
+%\clubpenalty=10000
+%\widowpenalty = 10000
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%  Beginning of document  %%%
@@ -84,7 +71,7 @@ morekeywords={version,owl,rdf,rdfs,xml,xsd,dbpedia,dbo,str,sso,scms,fr,ld}
 \begin{document}
 
 %\title{Named Entities for Analyzing Events in Twitter Stream}
-\title{The Truth is out there and also in Twitter: \\ Analyzing Events via Name Entity Extraction}
+\title{The Truth is out there but also on Twitter: \\ Analyzing Events via Name Entity Extraction}
 
 \numberofauthors{5}
 \author{
@@ -115,14 +102,14 @@ morekeywords={version,owl,rdf,rdfs,xml,xsd,dbpedia,dbo,str,sso,scms,fr,ld}
 
 \begin{abstract}
 
-Social platforms open a window to what is happening in the world in near real-time: microposts are constantly shared by people to report their experiences and feelings related to any type of events. Such an information can be collected and analyzed in order to get extra insights about what is happening out there regarding a particular event or story. However, the volume of information is very high and it is often difficult to extract such stories from a live social media stream. In this paper, we present a general framework to automatically mine social streams to provide journalists a set of headlines and complementary information that summarize the most important topics for a number of time-slots (time intervals) of interest. We describe an approach that collects fresh status from Twitter, groups them in time intervals and further analyzed them through deduplication, name entity extraction,  clusterization, and popularity reranking techniques. The final output is an temporarily ordered list of topics that aim to provide a summary of the most relevant insights about the studied event. 
+Social platforms open a window to what is happening in the world in near real-time: microposts are constantly shared by people to report their experiences and feelings related to any type of events. Such an information can be collected and analyzed in order to get extra insights about what is happening out there regarding a particular event or story. However, the volume of information is very high and it is often difficult to extract such stories from a live social media stream. In this paper, we present a general framework to automatically mine social streams to provide journalists a set of headlines and complementary information that summarize the most important topics for a number of time-slots (time intervals) of interest. We describe an approach that collects fresh status from Twitter, groups them in time intervals and further analyzed them through deduplication, name entity extraction,  clusterization, and popularity ranking techniques. The final output is an temporarily ordered list of topics that aim to provide a summary of the most relevant insights about the studied event. 
 
 \end{abstract}
 
 % A category with the (minimum) three required fields
 \category{H.3}{Information Storage and Retrieval}{Content Analysis and Indexing}
 
-\keywords{Topic Generation, Name Entity Extraction, Storyboard Creation}
+\keywords{Topic Generation, Name Entity Extraction, Event Detection}
 
 %%%%%%%%%%%%%%%%%%%%%%
 %%%  Introduction  %%%
@@ -130,19 +117,13 @@ Social platforms open a window to what is happening in the world in near real-ti
 
 \section{Introduction}
 \label{sec:introduction}
-The amount of videos shared on the Web is constantly increasing. We advocate the adoption of the Linked Media principles, where video segments are annotated with structured information and linked to other video segments. A new generation of innovative video services intend to use those semantic descriptions and media fragments for providing the users a novel experience where television content and web information are seamlessly interconnected.
+The amount of data shared on the Web is constantly increasing. With the wide adoption of social platforms, millions of users are constantly interacting and generating comments about what is happening around the world in great detail: giving opinions, providing videos and photos, linking to resources where extra information can be found, etc. A set of innovative analysis techniques intend to use those spread pieces of information for providing  professionals with insightful highlights about the facts going on out there and the users a novel experience based on appealing stories happening right now.
 
-The annotation problem has been traditionally addressed by applying multimedia analysis techniques \cite{ballan2011event}, but extracting semantic information from a video is still a challenging task. One possible approach consist in using Named Entity Recognition (NER) over the textual information attached to particular video fragment. Those techniques are an essential component within the Information Extraction field that focus on: identifying atomic information units in texts, named entities; classifying entities into predefined categories (also called context types) and linking to real world objects using web identifiers (Named Entity Disambiguation). A growing number of APIs provide such a service, like AlchemyAPI\footnote{\fontsize{8pt}{1em}\selectfont \url{http://www.alchemyapi.com/}} or DBpedia Spotlight\footnote{\fontsize{8pt}{1em}\selectfont \url{http://spotlight.dbpedia.org/}}. If the textual information attached to a video contains temporal references (e.g. subtitles), it is possible to align the entities with the time when they appear in the video. Katsiouli et al.~\cite{katsiouli2007} have demonstrated that applying named entity recognition techniques in combination with domain ontologies on video subtitles can produce good results for video classification.
+The understanding of a particular user generated text could benefit from the application of semantic analysis methods, but this is still a very challenging task specially considering the informal nature of most of the social platforms. One of the available approaches consist in using Named Entity Recognition (NER) over the textual information attached to particular video fragment. Those techniques are an essential component within the Information Extraction field that focus on: identifying atomic information units in texts, named entities; classifying entities into predefined categories (also called context types) and linking to real world objects using web identifiers (Named Entity Disambiguation). A growing number of APIs provide such a service, like AlchemyAPI\footnote{\fontsize{8pt}{1em}\selectfont \url{http://www.alchemyapi.com/}} or DBpedia Spotlight\footnote{\fontsize{8pt}{1em}\selectfont \url{http://spotlight.dbpedia.org/}}. Some studies have conducted experiments in how to apply those techniques over the noisy and informal 140 character messages coming from Twitter, like in Ritter et al.~\cite{Ritter2011} where they have probed to get very promising results by leveraging in tweets redundancy and using LabeledLDA to exploit Freebase dictionaries as a source of distant supervision. 
 
+The massive amount and steady increase of heterogeneous data shared on social platforms has attracted the interest of different research communities. Status updates or tweets enable people to share their activities, feelings, emotions and conversations, opening a window to the world in real-time. Making sense out this amount of data is an extremely challenging task due to its heterogeneity (media items mixed with textual data) and dynamics making often short-lived phenomena. A growing number of commercial tools and academic research approaches try to partially collect and analyze this data in order to make sense of it. Capturing life moments and building narratives using social platforms is, for example, the goal of Storify\footnote{\url{http://storify.com}} where the creators aim to investigate the interaction between event stories and the role of social networks that tell them: \textit{(i)}~sorting and organizing the items of an experience similar to the elements of a story, \textit{(ii)}~communicating and discussing strategies on how to guide a user towards an intended experience. The overall storytelling creation is supervised by the user who composes a story based on streams of news coming through social platforms such as Twitter and YouTube. Generating the big picture from these streams is also the objective of Storyful\footnote{\url{http://storyful.com}}. This application enables the user to navigate through the story created by other users or to create his own, aggregating content from different social platforms. While these two approaches position the role of a social platform as a container of fresh and breaking news items, they are leveraging on the user interaction that defines the summary creation as a supervised task. A disruptive innovation has been recently revealed by Mahaya\footnote{\url{http://mahaya.co}} which proposes an automatic crowd storyfication of the 12/12/12 concert\footnote{\url{http://121212.mahaya.co}}. In this example, the highlights of the concert corresponding to social media spikes when performers appeared are emphasized with images collected from Instagram, and microposts collected from Twitter. 
 
-A screencast showing an example of these functionalities is published at \url{http://youtu.be/jIMdnwMoWnk} while the system is publicly available at \url{http://mediafinder.eurecom.fr/story/elezioni2013}.
-
-
-The massive amount and steady increase of heterogeneous data shared on social platforms has attracted the interest of different research communities. Microposts such as status updates or tweets enable people to share their activities, feelings, emotions and conversations, opening a window to the world in real-time. Making sense out this amount of data is an extremely challenging task due to its heterogeneity (media items mixed with textual data) and dynamics making often short-lived phenomena. A growing number of commercial tools and academic research approaches try to partially collect and analyze this data in order to make sense of it. Capturing life moments and building narratives using social platforms is, for example, the goal of Storify\footnote{\url{http://storify.com}} where the creators aim to investigate the interaction between event stories and the role of social networks that tell them: \textit{(i)}~sorting and organizing the items of an experience similar to the elements of a story, \textit{(ii)}~communicating and discussing strategies on how to guide a user towards an intended experience. The overall storytelling creation is supervised by the user who composes a story based on streams of news coming through social platforms such as Twitter and YouTube. Generating the big picture from these streams is also the objective of Storyful\footnote{\url{http://storyful.com}}. This application enables the user to navigate through the story created by other users or to create his own, aggregating content from different social platforms. While these two approaches position the role of a social platform as a container of fresh and breaking news items, they are leveraging on the user interaction that defines the summary creation as a supervised task. A disruptive innovation has been recently revealed by Mahaya\footnote{\url{http://mahaya.co}} which proposes an automatic crowd storyfication of the 12/12/12 concert\footnote{\url{http://121212.mahaya.co}}. In this example, the highlights of the concert corresponding to social media spikes when performers appeared are emphasized with images collected from Instagram, and microposts collected from Twitter. Inspired by the idea of automatic summarization through visual galleries, we focus more on the automatic sorting and clustering of media items for topic visualization. In~\cite{Rizzo2012}, we proposed a generic media collector for retrieving media items that illustrate daily life moments shared on social platforms. In particular, we proposed a common schema in order to align the search results of numerous social platforms. This demonstration extends~\cite{Milicic2013}, adding to the codebase, the temporal feature to the cluster operations.
-
-~\cite{Aiello}
-
-~\cite{Schifferes}
+In a more research oriented line we find ~\cite{Rizzo2012}, where a generic media collector for retrieving media items is proposed for illustrating daily life moments shared on social platforms. A common schema aligns the search results of numerous social platforms making possible to access to a wider set of social status. In~\cite{Milicic2013} this approach is extended by adding to the codebase the temporal analisys and the cluster operations, and finally in~\cite{Milicic2013b} the authors put into practice the idea of automatic summarization through visual galleries focusing more on the adequate displaying of clusters for topic visualization. For the particular case of Twitter, ~\cite{Aiello} compares six topic detection method on three different datasets related to mayor events for probing that, apart of the nature of the event, the volume of activity over time, the sampling procedure and the pre-processing of the data, also the detection techniques greatly affect the quality of detected topics. Finally, in ~\cite{Schifferes} the authors elaborate on the relevance and utility of those analysis from a journalist point of view.
 
 %%%%%%%%%%%%%%%%%%
 %%%  Approach  %%%
@@ -298,14 +279,10 @@ The final step of the expansion consists of ranking the different named entities
 Formula
 For ranking results and generate results (see next section)
 
-Entities with a higher $relScore_{i}$ in the final classification are considered more representative for describing the context than the original entities. Furthermore, we observe that:
-\begin{itemize}
-  \item The bigger the sample size, and the better becomes the ranking. Entities appearing repeatedly in the additional documents will be promoted while those appearing rarely will be pushed back to the end of the list.
-  \item Entities that originally have not been disambiguated can now have their corresponding URL if any of the similar instances appearing in the additional documents provide a link to a Web resource. The same occurs with incomplete or misspelled labels.
-  \item Finally, some entities not spotted in the original transcripts but important in the context of the event are now included in the list of relevant items since they have been extracted from the collected documents.
-\end{itemize}
-
 FILTER ONLY WITH HIGH X BEFORE SERIALIZE
+
+
+
 \subsection{Generating results}
 \label{sec:results}
 
@@ -416,6 +393,13 @@ Finally, we compare the expert's feedback against the final DBpedia $E_{Expansio
 - any other idea is welcome - try to be creative!
 
 
+Entities with a higher $relScore_{i}$ in the final classification are considered more representative for describing the context than the original entities. Furthermore, we observe that:
+\begin{itemize}
+  \item The bigger the sample size, and the better becomes the ranking. Entities appearing repeatedly in the additional documents will be promoted while those appearing rarely will be pushed back to the end of the list.
+  \item Entities that originally have not been disambiguated can now have their corresponding URL if any of the similar instances appearing in the additional documents provide a link to a Web resource. The same occurs with incomplete or misspelled labels.
+  \item Finally, some entities not spotted in the original transcripts but important in the context of the event are now included in the list of relevant items since they have been extracted from the collected documents.
+\end{itemize}
+
 %%%%%%%%%%%%%%%%%%%%%
 %%%  Conclusions  %%%
 %%%%%%%%%%%%%%%%%%%%%
@@ -424,7 +408,6 @@ Finally, we compare the expert's feedback against the final DBpedia $E_{Expansio
 We presented an approach for context-aware annotating news events, designed to precisely harvest program descriptions starting from named entities recognized in TV video transcripts. Because the entities initially spotted are typically insufficient for covering the broader range of concepts that best describe a particular news clip, we expanded this set by analyzing additional textual documents about the same event.
 
 The flat ranked list of concepts is afterward completed with cues about their connectivity obtained by analyzing the DBpedia paths that exist between them. In particular, we promoted entities which are better interlinked inside the context and with higher frequency in the nodes of the generated DBpedia paths. Finally, we identify the important predicates linking those entities. This leads to a more accurate re-ranking of the entities belonging to this news event.
-
 The preliminary results indicate that we can successfully expand the initial set of recognized entities with more relevant concepts not detected by pure named entity recognition approaches. Exploring DBpedia paths along the named entities occurring in news media leads to a more accurate ranking of important concepts and even if it does not necessary introduce any new top item, it brings forward more related entities with additional information about the broader context of an event.
 
 - Something as simple as doing a first text cleaning/reprocessing of the tweets would have boosted (imho) the final results: for example, grouping tweets that have -almost- the same text (some people just c\&p other tweets and add some extra punctuation sign or small expression) will significantly improve the subsequent clustering operations.
@@ -437,9 +420,6 @@ The preliminary results indicate that we can successfully expand the initial set
 This research has been partially funded by the European Union's 7th Framework Programme via the project LinkedTV (GA 287911) and Ghent University.
 %iMinds (Interdisciplinary institute for Technology) a research institute founded by the Flemish Government,
 %the Institute for the Promotion of Innovation by Science and Technology in Flanders (IWT), the Fund for Scientific Research-Flanders (FWO-Flanders),
-
-REFERENCE MEDIAFINDER PAPER.
-ReFERENCE MEDIA COLLECTOR??
 
 \bibliographystyle{abbrv}
 \bibliography{snow_challenge}
