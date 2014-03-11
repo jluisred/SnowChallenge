@@ -225,7 +225,7 @@ s_{n}^{t} = s_{n}^{t-1} *\left ( 1+\frac{\left | Topic_{N}\right |  - \left | To
 \end{equation}
 \begin{itemize}
   \item A new topic T as always an tendency score $s_{t}$ equal to 1(neutral value).
-  \item By default, a tendency score $s_{t}$ is reduced in a certain rate $\beta$ from one state to the following.
+  \item By default, a tendency score $s_{t}$ is reduced in a certain rate $\beta$ from one state to the following (in our approach, $\beta=0.85$).
   \item The tendency score $s_{t}$ decreases faster if the tendency is negative.
   \item The tendency score $s_{t}$ increases if the tendency in the last states has been positive enough.
 \end{itemize}
@@ -276,70 +276,64 @@ We consider as peaks inside a particular set of tweets those individuals with an
 \label{fig:Peaks}
 \end{figure}
 
-The same idea of study the evolution of topics in time applied over the clusters should to be considered again in the case of the peaks. If we know the previous tendencies of a certain status we can better decide if we have to consider it as a main candidate for the popularity measures of a cluster or it should be considered as less importance since it had already an high relevance for some previous studied topic. In our solution we have implemented a very simple strategy that keeps track of the already considered outstanding peaks in order to relax its popularity measures when they emerge again.
+The same idea of studying the evolution of the topics in time should to be considered again in the case of the peaks. If we know about the tendency of a certain status in the past we can better consider it as a good candidate for the topic popularity measures or it should be relegated since it was something that had already repercussion in previous clusters. In our solution we opted for a very simple strategy consisting on annotating the peaks that have been already considered as outstanding in order to relax its popularity scores when they emerge again.
 
 \begin{equation} \label{eq:topicpopularity}
 \text{Pop}(Topic_N) =\left (\sum_{0}^{n}Popularity(tw)_i   \right )* \left |\text{Peaks}(Topic_N)  \right |
 \end{equation}
 
-Finally, the number of peaks inside a certain topic and its average popularity are combined together as shown in Equation~\ref{eq:topicpopularity}. The final score will be used again as a way of promoting certain topics over others inside a particular time-slot (popularity reranking) and for programmatically generating some of the main cluster features that will be serialized as results in Section~\ref{sec:results}.
+In a last step, the number of peaks inside a certain topic and its average popularity are combined together as shown in Equation~\ref{eq:topicpopularity}, and the final score is used again for promoting certain topics over others inside a particular time-slot (popularity reranking) and for programmatically generating extra topic features features that will be serialized as shown in Section~\ref{sec:results}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%  Results and Preliminary Evaluation  %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Results and Preliminary Evaluation}
+\section[Results and Preliminary Evaluation]{Results and Preliminary \\ Evaluation}
 \label{sec:results}
 
-Once a set of ranked cluster has been produced per each time-slot they are used together with their relevance index during the serialization of the topics that will be the final result of this approach. The first thing to be done is to filter the number of topics per time-slot. The output of the clustering operation produces many candidates that don't worth to be included in the output and need to be discarded. In our case we ignore clusters whose relevance falls under a $90\%$ of the relevance range of that particular time-slot. Then we use our knowledge about the corresponding topics for generating the following features:
+Once the set of ranked clusters per each time-slot has been produced we are ready to produce the topics that become the final result of this approach. The first thing to be done is to filter the number of topics per time-slot. Since the output of the clustering operation produces many candidates that don't worth to be included in the output, a mechanism for discarding them is needed. In our case we ignore clusters whose relevance falls under a $90\%$ of the range of that particular time-slot. Then we use our knowledge about the corresponding topics for generating the following fields:
 \begin{itemize}
-  \item Time/date of the beginning of the time-slot this topic is relevant to.
-  \item Topic title: human friendly sentence summarizing the main fact behind the cluster. In our approach we obtain this field from the most relevant peak's text.
-  \item Comma-separated list of relevant tags; in our approach, a list of other discriminative entities inside the cluster.
-  \item Ids of the main tweets conceding the topic: Comma-separated list of tweet ids corresponding to peaks inside the cluster.
-  \item List of Image URL: Valid image URLs that have been mentioned in the tweets inside the cluster, ordered by the popularity of the tweets they belong to.
+  \item Beginning time/date of the time-slot where this topic belongs to.
+  \item Topic title: human friendly sentence summarizing the main fact behind the topic. In our approach this field is obtained from the most relevant peak's text.
+  \item Comma-separated list of relevant tags. In our approach, we select other prominent entities inside the cluster.
+  \item Id's of the main tweets inside the topic: Comma-separated list of tweet id's corresponding to peaks inside the cluster.
+  \item List of Image: Valid image URL's mentioned in the tweets inside the cluster, ordered by the popularity of the tweets they belong to.
 \end{itemize}
 
-We have applied this method over two real scenarios. The first one corresponds to  
-The United States presidential election of 2012 held on Tuesday, November 6, 2012, where The Democratic nominee, incumbent President Barack Obama, and his running mate, Vice President Joe Biden, were re-elected to a second term, defeating the Republican nominee Mitt Romney.
-
-The time period for which this particular event is relevant goes from 2013-07-06 to 2013-07-17.
-where a ground truth was available. The results were ok but not in the timing of the clusters.
-The second case was: Syria,terror,Ukraine,bitcoin, time range Mon 17 Feb, 18:00 GMT and Tue 18 Feb, 18:00 GMT.
+We have applied this method over two real scenarios.The first one corresponded to the United States presidential election of 2012 held on Tuesday, November 6, 2012, where the democratic nominee Barack Obama, and his running mate Vice President Joe Biden were re-elected to a second term, defeating the Republican nominee Mitt Romney. The organization of the Data Challenge~\cite{snow2014dc} provided a ground truth of topics to compare with, which were used for training purposes. For example in Table~\ref{table:topics} are some of the topics that were generated for the time-slot corresponding to the 07th at 00:40.
 
 \begin{table}[tbp]
   \resizebox{8cm}{!} {
-\begin{tabular}{ c | c | c | c | c }
+\begin{tabular}{ c | c | c | c | c | c }
   \hline
- Label & Relevance & Sentiment & Type & URI  \\ \hline
-Russia & 0.809216 & Mixed & Location & DBpedia:Russia \\
-Edward Snowden & 0.717369 & Mixed & Person & DBpedia:/Edward\_Snowden \\
-South America & 0.56586 & Mixed & Location & DBpedia:South\_America \\
-president Putin & 0.459811 & positive & Person & DBpedia:Vladimir\_Putin \\
-president & 0.401138 & negative & JobTitle & DBpedia:President \\
-Moscow & 0.352101 & Mixed & City & DBpedia:Moscow \\
-CIA & 0.334887 & neutral & Organization & DBpedia:CIA \\
-Bolivia & 0.324607 & neutral & Location & DBpedia:Bolivia \\
-Obama & 0.321901 & negative & Person & DBpedia:Barack\_Obama \\
+ Cluster\_Label & Tweets & EF & ECF & Peaks & $Rel_{Final}$  \\ \hline
+dbpedia:United\_States\_presidential\_election &   193 &  185  &  0 & 8 & 0.9585492 \\
+dbpedia:Democratic\_Party\_\%28United\_States\%29 &   165 &  146  &  1 & 9 &  0.8848484 \\
+dbpedia:Republican\_Party\_\%28United\_States\%29 &   541 &  454 & 5 & 13 &  0.8391866 \\
+dbpedia:Barack\_Obama & 1460 &  1165  &  17 & 21 &  0.7979452 \\
+dbpedia:Kentucky &   163 &  126  &  1 & 25 &  0.77300613 \\
+dbpedia:Virginia &   170 &  130  &  2 &  24 & 0.7647058 \\
+dbpedia:Mitt\_Romney &   2458 &  1822  &  17 & 31 &  0.7412530 \\
+dbpedia:United\_States &   185 & 131  &  0 & 12 & 0.7081081 \\
+dbpedia:Ohio &   341 &  235  &  3 & 27 &0.6891495  \\
+dbpedia:The\_Changing\_of\_Times & 921 &  603  &  6 & 3 &  0.6547231\\
+dbpedia:Massachusetts &   363 & 237 & 1 &  16 &0.6528925\\
+dbpedia:CNN & 211 & 136  &  1 &  9 & 0.6445497\\
+dbpedia:George\_W.\_Bush &   172 &  109  &  0 & 13 & 0.6337209 \\
   \hline
 \end {tabular}
   }
-\caption{Proposed topics for a certain timeslot corresponding to the }
+\caption{Proposed topics for a 10 minutes time interval corresponding to the American Elections 2012}
+\label{table:topics}
 \end{table}
 
-We plan to extend this evaluation to a larger corpora and include a more exhaustive evaluation in future work. We start from the list of entities provided by the expert, together with some insights about the relevance of the concept inside the scope of the video:
-bitcoin is problematic.
+The second experiment analyzed the difficult social and political situation in Ukraine and was conducted from the 17th Feb 2014 at 18:00 GMT to the 18th Feb at 18:00 GMT. The official evaluation results of our method in this particular data set are included in~\cite{snow2014dc}. However, we introduce here some general thoughts and first impressions. Regarding the textual labels of the generated topics, they seems to correspond to relevant facts occurring during those 24 hours. To judge if the time'slots where those topics have been included are the correct ones is far more complicated since it is always fuzzy to determine when a particular fact about an event showed up. The comparison of the results with the clusters generated by applying LDA~\cite{Aiello} do not spread too much light about this neither. 
 
-We first evaluate the set of entities spotted by the expert against traditional LDA results from NERD. 
+Other issue is the appearance of terms like market or Goldman Sachs that break the uniformity of the story. There is a reason for such irruption of economic domain concepts: the word "bitcoin" has been used as input during the streaming collection process. Whether this was made in purpose or not, it worths to be studied if the inclusion of terms concerning different matters still allows to correctly track the parallel stories happening, or if the noise introduced blurs the quality of the topic detection. 
 
--in case your method uses parameters explain how you selected them, and how they affected results
+The bigger size of the timeslots in the second experiment requires some changes through a more strict clustering filtering that avoids too large amount of candidate topics. Another difference of the current event against the training set was the volume of information generated: the American Elections is a really big event, condensed mainly in 24 hours, while the Ukrainian conflict do not have the same instant repercussion and lasts for several weeks instead. However, no changes seem to be needed in this line and both scenarios seem to be well analyzed under the same parameters. 
 
-Topics are easily understandable. Entitites are good keywords. Peak boost relevance in a very good way 
-The bigger the sample size, and the more challenging becomes the topic filtering step. The breeding approach is not always the best one.  
-Entities that originally have not been disambiguated can now have their corresponding URL if any of the similar instances appearing in the additional documents provide a link to a Web resource. The same occurs with incomplete or misspelled labels.
- 
-  Peaks are not always the best solution. Summarization techniques over them
-  The official evaluation results of our method in the Data Challenge are included in \cite{snow2014dc}.
+Going into the topic features, entities seem to work pretty good as keywords, and the peak detection offers relevant Tweets Id's closely related. the current topic matter. Labels are well readable, but we could have obtained more representativeness by applying some summarization techniques over the top N peaks instead of going for just the most popular tweet.  .
 
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -352,6 +346,9 @@ We presented an approach for context-aware annotating news events, designed to p
 The flat ranked list of concepts is afterward completed with cues about their connectivity obtained by analyzing the DBpedia paths that exist between them. In particular, we promoted entities which are better interlinked inside the context and with higher frequency in the nodes of the generated DBpedia paths. Finally, we identify the important predicates linking those entities. This leads to a more accurate re-ranking of the entities belonging to this news event.
 
 The preliminary results indicate that we can successfully expand the initial set of recognized entities with more relevant concepts not detected by pure named entity recognition approaches. Exploring DBpedia paths along the named entities occurring in news media leads to a more accurate ranking of important concepts and even if it does not necessary introduce any new top item, it brings forward more related entities with additional information about the broader context of an event.
+
+
+The breeding approach is not always the best one
 
 - Something as simple as doing a first text cleaning/reprocessing of the tweets would have boosted (imho) the final results: for example, grouping tweets that have -almost- the same text (some people just c\&p other tweets and add some extra punctuation sign or small expression) will significantly improve the subsequent clustering operations.
 - Further analyze the temporal dimension: even we are dividing the event period into time slots, it is crucial to properly track how the clusters change over the time, in order to discard noisy data from previous events and emphasize what is really new. Indeed there is a sort of cold start problem with first topics in the interval, since we don't know what happened before.
