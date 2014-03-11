@@ -102,7 +102,7 @@ morekeywords={version,owl,rdf,rdfs,xml,xsd,dbpedia,dbo,str,sso,scms,fr,ld}
 
 \begin{abstract}
 
-Social platforms open a window to what is happening in the world in near real-time: microposts are constantly shared by people to report their experiences and feelings related to any type of events. Such an information can be collected and analyzed in order to get extra insights about what is happening out there regarding a particular event or story. However, the volume of information is very high and it is often difficult to extract such stories from a live social media stream. In this paper, we present a general framework to automatically mine social streams to provide journalists a set of headlines and complementary information that summarize the most important topics for a number of time-slots (time intervals) of interest. We describe an approach that collects fresh status from Twitter, groups them in time intervals and further analyzed them through deduplication, name entity extraction,  clusterization, and popularity ranking techniques. The final output is an temporarily ordered list of topics that aim to provide a summary of the most relevant insights about the studied event. 
+Social platforms open a window to what is happening in the world in near real-time: people are constantly sharing and report their experiences and feelings concerning any kind of event. Such information can be programmatically collected and analyzed in order to get extra insights about what is happening out there regarding a particular matter. However, the volume of information is very high and it is often difficult to extract such stories from a live social media stream. In this paper, we present a general framework to automatically mine social streams and provide journalists a set of headlines and complementary information that summarize the most important topics for a number of relevant time intervals. We describe an approach that collects fresh status from Twitter, groups them in time-slots and further analyzed them through deduplication, name entity extraction,  clustering, and popularity ranking techniques. The final output is an temporarily ordered list of topics that aim to provide a summary of the most relevant insights about the target event. 
 
 \end{abstract}
 
@@ -295,12 +295,12 @@ Once the set of ranked clusters per each time-slot has been produced we are read
 \begin{itemize}
   \item Beginning time/date of the time-slot where this topic belongs to.
   \item Topic title: human friendly sentence summarizing the main fact behind the topic. In our approach this field is obtained from the most relevant peak's text.
-  \item Comma-separated list of relevant tags. In our approach, we select other prominent entities inside the cluster.
-  \item Id's of the main tweets inside the topic: Comma-separated list of tweet id's corresponding to peaks inside the cluster.
+  \item Comma separated list of relevant tags. In our approach, we select other prominent entities inside the cluster.
+  \item Id's of the main tweets inside the topic: list of tweet id's corresponding to peaks inside the cluster.
   \item List of Image: Valid image URL's mentioned in the tweets inside the cluster, ordered by the popularity of the tweets they belong to.
 \end{itemize}
 
-We have applied this method over two real scenarios.The first one corresponded to the United States presidential election of 2012 held on Tuesday, November 6, 2012, where the democratic nominee Barack Obama, and his running mate Vice President Joe Biden were re-elected to a second term, defeating the Republican nominee Mitt Romney. The organization of the Data Challenge~\cite{snow2014dc} provided a ground truth of topics to compare with, which were used for training purposes. For example in Table~\ref{table:topics} are some of the topics that were generated for the time-slot corresponding to the 07th at 00:40.
+We have applied this method over two real scenarios.The first one corresponded to the United States presidential election of 2012 held on Tuesday, November 6, 2012, where the democratic nominee Barack Obama, and his running mate Vice President Joe Biden were re-elected to a second term, defeating the Republican nominee Mitt Romney. The organization of the Data Challenge~\cite{snow2014dc} provided a ground truth of topics to compare with, which were used for training purposes. For example Table~\ref{table:topics} shows some of the topics generated for the time-slot corresponding to the 07th at 00:40.
 
 \begin{table}[tbp]
   \resizebox{8cm}{!} {
@@ -327,13 +327,13 @@ dbpedia:George\_W.\_Bush &   172 &  109  &  0 & 13 & 0.6337209 \\
 \label{table:topics}
 \end{table}
 
-The second experiment analyzed the difficult social and political situation in Ukraine and was conducted from the 17th Feb 2014 at 18:00 GMT to the 18th Feb at 18:00 GMT. The official evaluation results of our method in this particular data set are included in~\cite{snow2014dc}. However, we introduce here some general thoughts and first impressions. Regarding the textual labels of the generated topics, they seems to correspond to relevant facts occurring during those 24 hours. To judge if the time'slots where those topics have been included are the correct ones is far more complicated since it is always fuzzy to determine when a particular fact about an event showed up. The comparison of the results with the clusters generated by applying LDA~\cite{Aiello} do not spread too much light about this neither. 
+The second experiment analyzed the difficult social and political situation in Ukraine and was conducted from the 17th Feb 2014 at 18:00 GMT to the 18th Feb at 18:00 GMT. The official evaluation results of our method in this particular data set are included in~\cite{snow2014dc}. However, we introduce here some general thoughts and first impressions. Regarding the textual labels of the generated topics, they seems to correspond to relevant facts occurring during those 24 hours. To judge if the time-slots where those topics have been included are the correct ones is far more complicated since it is always fuzzy to determine when a particular fact about an event showed up. The comparison of the results with the clusters generated by applying LDA~\cite{Aiello} do not spread too much light about this neither. 
 
 Other issue is the appearance of terms like market or Goldman Sachs that break the uniformity of the story. There is a reason for such irruption of economic domain concepts: the word "bitcoin" has been used as input during the streaming collection process. Whether this was made in purpose or not, it worths to be studied if the inclusion of terms concerning different matters still allows to correctly track the parallel stories happening, or if the noise introduced blurs the quality of the topic detection. 
 
-The bigger size of the timeslots in the second experiment requires some changes through a more strict clustering filtering that avoids too large amount of candidate topics. Another difference of the current event against the training set was the volume of information generated: the American Elections is a really big event, condensed mainly in 24 hours, while the Ukrainian conflict do not have the same instant repercussion and lasts for several weeks instead. However, no changes seem to be needed in this line and both scenarios seem to be well analyzed under the same parameters. 
+The bigger size of the time-slots in the second experiment requires some changes through a more strict clustering filtering that avoids too large amount of candidate topics. Another difference of the current event against the training set was the volume of information generated: the American Elections is a really big event, condensed mainly in 24 hours, while the Ukrainian conflict do not have the same instant repercussion and lasts for several weeks instead. However, no changes seem to be needed in this line and both scenarios seem to be well analyzed under the same parameters. 
 
-Going into the topic features, entities seem to work pretty good as keywords, and the peak detection offers relevant Tweets Id's closely related. the current topic matter. Labels are well readable, but we could have obtained more representativeness by applying some summarization techniques over the top N peaks instead of going for just the most popular tweet.  .
+Going deeper into the topic features, entities seem to work pretty good as keywords, and the peak detection offers tweet Id's closely related to the topic matter. Labels are well readable, but we could have obtained more representativeness by applying some summarization techniques over the top N peaks instead of going for just the most popular tweet.
 
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -342,18 +342,12 @@ Going into the topic features, entities seem to work pretty good as keywords, an
 
 \section{Conclusions}
 We presented an approach for context-aware annotating news events, designed to precisely harvest program descriptions starting from named entities recognized in TV video transcripts. Because the entities initially spotted are typically insufficient for covering the broader range of concepts that best describe a particular news clip, we expanded this set by analyzing additional textual documents about the same event.
-
 The flat ranked list of concepts is afterward completed with cues about their connectivity obtained by analyzing the DBpedia paths that exist between them. In particular, we promoted entities which are better interlinked inside the context and with higher frequency in the nodes of the generated DBpedia paths. Finally, we identify the important predicates linking those entities. This leads to a more accurate re-ranking of the entities belonging to this news event.
 
-The preliminary results indicate that we can successfully expand the initial set of recognized entities with more relevant concepts not detected by pure named entity recognition approaches. Exploring DBpedia paths along the named entities occurring in news media leads to a more accurate ranking of important concepts and even if it does not necessary introduce any new top item, it brings forward more related entities with additional information about the broader context of an event.
-
-
-The breeding approach is not always the best one
-
-- Something as simple as doing a first text cleaning/reprocessing of the tweets would have boosted (imho) the final results: for example, grouping tweets that have -almost- the same text (some people just c\&p other tweets and add some extra punctuation sign or small expression) will significantly improve the subsequent clustering operations.
-- Further analyze the temporal dimension: even we are dividing the event period into time slots, it is crucial to properly track how the clusters change over the time, in order to discard noisy data from previous events and emphasize what is really new. Indeed there is a sort of cold start problem with first topics in the interval, since we don't know what happened before.
+There are many open challenges for improving the current approach that we would like to further study in upcoming publications. First, something as simple as a preliminary text cleaning and reprocessing of the collected tweets would boosted the consequent results, specially for those cases where different tweets that have almost the same text (some people just c\&p other tweets without retweeting or mentioning). 
 - Use the original JSON format as it comes from the Twitter Stream API. This is not entirely our fault because at the beginning the organizers gave us a different reduced schema and we prepared our subsequent tools for working over it… but Twitter originally provides a more much rich metadata where for example they already include what they call "entities" (hashtags and keywords). 
 -  As distance metric for comparing pairs of entities, we applied strict string similarity over the URL's, and in case of mismatch, the Jaro-Winkler string distance~\cite{winkler2006overview} over the labels. 
+The breeding approach is not always the best one
 
 %ACKNOWLEDGMENTS are optional
 \section*{Acknowledgments}
